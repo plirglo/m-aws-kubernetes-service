@@ -15,7 +15,8 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"hashicorp.terraform"
+		"hashicorp.terraform",
+		"golang.go"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
