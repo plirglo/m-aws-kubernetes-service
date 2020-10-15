@@ -56,6 +56,10 @@ make release VERSION=number_of_your_choice
 For example if you are running a 1.16 EKS cluster set version to v1.16.5.
 For more details check [documentation](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md#notes)
 
+## Windows users
+
+This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder.
+
 ## Module dependencies
 
 | Component                     | Version | Repo/Website                                                                                                | License                                                           |
