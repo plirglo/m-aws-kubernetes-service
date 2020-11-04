@@ -111,7 +111,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   make all
   ```
 
-  This command will create AWS Basic Infrastructure and AWS EKS on top of it.
+  This command will create AwsKS cluster in already existing subnets.
 
 ## Destroy EKS cluster
 
