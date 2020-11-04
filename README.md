@@ -38,9 +38,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   ```
 
   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
-  Available variables:
-  * M_NAME = < module name > (default: epiphany)
-  * M_REGION = < aws region > (default: eu-central-1)
+  Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
 
   Note: M_REGION and M_NAME have to be the same as in AwsBI module
 
@@ -51,11 +49,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   ```
 
    This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
-  Available variables:
-  * M_NAME = < module name > (default: epiphany)
-  * M_REGION = < aws region of existing vpc > (default: eu-central-1)
-  * M_VPC_ID = < existing vpc id > (default: unset)
-  * M_SUBNET_IDS = < list of existing subnet ids > (default: null)
+   Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
+
 
 * Plan and apply AwsKS module:
 
@@ -141,7 +136,7 @@ For more details check [documentation](https://github.com/terraform-aws-modules/
 ## Windows users
 
 This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder or ```examples/create_in_existing_subnets_devcontainer```.
- 
+
 ## Module dependencies
 
 | Component                     | Version | Repo/Website                                                                                                | License                                                           |
