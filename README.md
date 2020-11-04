@@ -47,7 +47,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 * Initialize the AwsKS module in already existing subnets:
 
   ```shell
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id, ...]"
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
 
    This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
@@ -57,11 +57,11 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   * M_VPC_ID = < existing vpc id > (default: unset)
   * M_SUBNET_IDS = < list of existing subnet ids > (default: null)
 
-* Plan and apply AwsKS module on top of [AwsBI Module](https://github.com/epiphany-platform/m-aws-basic-infrastructure):
+* Plan and apply AwsKS module:
 
   ```shell
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret" M_NAME=xxx
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret" M_NAME="module name"
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret"
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret"
   ```
 
   Running those commands should create EKS service. You can verify it in AWS Management Console.
