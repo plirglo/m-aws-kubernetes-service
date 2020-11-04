@@ -14,6 +14,8 @@
 |M_SUBNET_IDS |list of string |unset |no |List of the existing subnet id to deploy
 EKS cluster in
 
+|M_PRIVATE_ROUTE_TABLE_ID |string |unset |no |The id of private route table
+
 |M_REGION |string |eu-central-1 |no |AWS Region where to deploy
 EKS cluster in
 |===
