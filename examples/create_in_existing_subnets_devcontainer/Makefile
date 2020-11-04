@@ -26,7 +26,10 @@ clean:
 
 init: setup
 	@cd $(M_WORKDIR) && $(MAKE) init \
-		M_NAME=$(M_NAME)
+		M_NAME=$(M_NAME) \
+		M_REGION=$(M_REGION) \
+		M_VPC_ID=$(M_VPC_ID) \
+		M_SUBNET_IDS=$(M_SUBNET_IDS)		
 
 plan: setup
 	@cd $(M_WORKDIR) && $(MAKE) plan \

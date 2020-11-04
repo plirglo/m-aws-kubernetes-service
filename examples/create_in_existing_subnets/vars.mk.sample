@@ -1,0 +1,5 @@
+AWS_ACCESS_KEY = "access key id"
+AWS_SECRET_KEY = "access key secret"
+M_REGION="region of existing VPC"
+M_VPC_ID="existiing vpc id"
+M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"

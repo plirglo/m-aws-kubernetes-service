@@ -47,14 +47,21 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 * Initialize the AwsKS module in already existing subnets:
 
   ```shell
-  #TO-DO
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id, ...]"
   ```
+
+   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
+  Available variables:
+  * M_NAME = < module name > (default: epiphany)
+  * M_REGION = < aws region of existing vpc > (default: eu-central-1)
+  * M_VPC_ID = < existing vpc id > (default: unset)
+  * M_SUBNET_IDS = < list of existing subnet ids > (default: null)
 
 * Plan and apply AwsKS module on top of [AwsBI Module](https://github.com/epiphany-platform/m-aws-basic-infrastructure):
 
   ```shell
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY=xxx M_AWS_SECRET_KEY=xxx M_NAME=xxx
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY=xxx M_AWS_SECRET_KEY=xxx M_NAME=xxx
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret" M_NAME=xxx
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret" M_NAME="module name"
   ```
 
   Running those commands should create EKS service. You can verify it in AWS Management Console.
@@ -72,8 +79,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 * Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/basic_flow/vars.mk.sample):
 
   ```shell
-  AWS_ACCESS_KEY_ID = "xxx"
-  AWS_ACCESS_KEY_SECRET = "xxx"
+  AWS_ACCESS_KEY_ID = "access key id"
+  AWS_ACCESS_KEY_SECRET = "access key secret"
   ```
 
 * Create environment
@@ -87,9 +94,24 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
 ## Run module with provided example in existing subnets
 
+* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/basic_flow/vars.mk.sample):
+
   ```shell
-  #TO-DO
+  AWS_ACCESS_KEY = "access key id"
+  AWS_SECRET_KEY = "access key secret"
+  M_REGION="region of existing VPC"
+  M_VPC_ID="existing vpc id"
+  M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
+
+* Create environment
+
+  ```shell
+  cd examples/create_in_existing_subnets
+  make all
+  ```
+
+  This command will create AWS Basic Infrastructure and AWS EKS on top of it.
 
 ## Destroy EKS cluster
 

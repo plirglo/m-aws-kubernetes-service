@@ -1,0 +1,19 @@
+== Input parameters
+
+[width="100%",cols="7%,1%,100%a,1%,50%a",options="header",]
+|===
+|Name |Type |Default value |Required |Description
+|AWS_ACCESS_KEY |string |unset |yes |Access key id
+
+|AWS_SECRET_KEY |string |unset |yes |Access key secret
+
+|M_NAME |string |epiphany |no |Prefix for resource names
+
+|M_VPC_ID |string |unset |no |The id of virtual private cloud
+
+|M_SUBNET_IDS |list of string |unset |no |List of the existing subnet id to deploy
+EKS cluster in
+
+|M_REGION |string |eu-central-1 |no |AWS Region where to deploy
+EKS cluster in
+|===

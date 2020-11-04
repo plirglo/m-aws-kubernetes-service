@@ -3,6 +3,7 @@ data "aws_vpc" "vpc" {
 }
 
 data "aws_route_table" "private_route_table" {
+  count          = var.subnet_ids != null ? 0 : 1
   route_table_id = var.private_route_table_id
 }
 
@@ -10,6 +11,7 @@ data "aws_route_table" "private_route_table" {
 # Following part could be created in aws-basic-infrastructure module
 # ----------------------------------------------------------------------------------------------------------------------
 resource "aws_subnet" "eks-subnet1" {
+  count      = var.subnet_ids != null ? 0 : 1
   vpc_id     = data.aws_vpc.vpc.id
   cidr_block = cidrsubnet(data.aws_vpc.vpc.cidr_block, 4, 14)
   availability_zone = "${var.region}a"
@@ -23,6 +25,7 @@ resource "aws_subnet" "eks-subnet1" {
 }
 
 resource "aws_subnet" "eks-subnet2" {
+  count      = var.subnet_ids != null ? 0 : 1
   vpc_id     = data.aws_vpc.vpc.id
   cidr_block = cidrsubnet(data.aws_vpc.vpc.cidr_block, 4, 15)
   availability_zone = "${var.region}b"
@@ -36,17 +39,20 @@ resource "aws_subnet" "eks-subnet2" {
 }
 
 resource "aws_route_table_association" "private1" {
-  subnet_id      = aws_subnet.eks-subnet1.id
-  route_table_id = data.aws_route_table.private_route_table.route_table_id
+  count          = var.subnet_ids != null ? 0 : 1
+  subnet_id      = aws_subnet.eks-subnet1[0].id
+  route_table_id = data.aws_route_table.private_route_table[0].route_table_id
 }
 
 resource "aws_route_table_association" "private2" {
-  subnet_id      = aws_subnet.eks-subnet2.id
-  route_table_id = data.aws_route_table.private_route_table.route_table_id
+  count          = var.subnet_ids != null ? 0 : 1
+  subnet_id      = aws_subnet.eks-subnet2[0].id
+  route_table_id = data.aws_route_table.private_route_table[0].route_table_id
 }
 
 # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
 resource "aws_ec2_tag" "eks-vpc" {
+  count       = var.subnet_ids != null ? 0 : 1
   resource_id = data.aws_vpc.vpc.id
   key         = "kubernetes.io/cluster/${var.name}-eks"
   value       = "shared"
@@ -58,7 +64,7 @@ module "awsks" {
   name                                        = var.name
   k8s_version                                 = "1.17"
   vpc_id                                      = data.aws_vpc.vpc.id
-  subnets                                     = [aws_subnet.eks-subnet1.id,aws_subnet.eks-subnet2.id]
+  subnets                                     = var.subnet_ids != null ? var.subnet_ids : [aws_subnet.eks-subnet1[0].id,aws_subnet.eks-subnet2[0].id]
   worker_groups                               = var.worker_groups
   region                                      = var.region
   autoscaler_version                          = "v1.17.3"

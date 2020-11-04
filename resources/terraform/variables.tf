@@ -1,3 +1,8 @@
+variable "subnet_ids" {
+  description = "Existing subnet ids to join to"
+  type = list(string)
+}
+
 variable "name" {
   description = "Prefix for resource names"
   type        = string
@@ -31,12 +36,6 @@ variable "worker_groups" {
 
 variable "region" {
   description = "Region for AWS resources"
-  type        = string
-}
-
-# Necessary for egress internet access from private networks
-variable "public_subnet_id" {
-  description = "Subnet id to attach NAT gateway to"
   type        = string
 }
 
