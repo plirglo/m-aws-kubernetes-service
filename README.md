@@ -48,9 +48,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
 
-   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
-   Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
-
+   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file. Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
 
 * Plan and apply AwsKS module:
 
