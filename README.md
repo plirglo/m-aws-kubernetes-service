@@ -94,7 +94,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
 ## Run module with provided example in existing subnets
 
-* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/basic_flow/vars.mk.sample):
+* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/create_in_existing_subnets/vars.mk.sample):
 
   ```shell
   AWS_ACCESS_KEY = "access key id"
@@ -140,8 +140,8 @@ For more details check [documentation](https://github.com/terraform-aws-modules/
 
 ## Windows users
 
-This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder.
-
+This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder or ```examples/create_in_existing_subnets_devcontainer```.
+ 
 ## Module dependencies
 
 | Component                     | Version | Repo/Website                                                                                                | License                                                           |
