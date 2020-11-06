@@ -13,7 +13,7 @@ $(M_MODULE_SHORT):
   name: $(M_NAME)
   vpc_id: $(M_VPC_ID)
   region: $(M_REGION)
-  public_subnet_id: $(M_PUBLIC_SUBNET_ID)
+  subnet_ids: $(M_SUBNET_IDS)
   private_route_table_id: $(M_PRIVATE_ROUTE_TABLE_ID)
 endef
 

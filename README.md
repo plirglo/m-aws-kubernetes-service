@@ -38,23 +38,23 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   ```
 
   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
-  Available variables:
-  * M_NAME = < module name > (default: epiphany)
-  * M_REGION = < aws region > (default: eu-central-1)
+  Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
 
   Note: M_REGION and M_NAME have to be the same as in AwsBI module
 
 * Initialize the AwsKS module in already existing subnets:
 
   ```shell
-  #TO-DO
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
 
-* Plan and apply AwsKS module on top of [AwsBI Module](https://github.com/epiphany-platform/m-aws-basic-infrastructure):
+   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file. Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
+
+* Plan and apply AwsKS module:
 
   ```shell
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY=xxx M_AWS_SECRET_KEY=xxx M_NAME=xxx
-  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY=xxx M_AWS_SECRET_KEY=xxx M_NAME=xxx
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest plan M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret"
+  docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest apply M_AWS_ACCESS_KEY="access key id" M_AWS_SECRET_KEY="access key secret"
   ```
 
   Running those commands should create EKS service. You can verify it in AWS Management Console.
@@ -72,8 +72,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 * Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/basic_flow/vars.mk.sample):
 
   ```shell
-  AWS_ACCESS_KEY_ID = "xxx"
-  AWS_ACCESS_KEY_SECRET = "xxx"
+  AWS_ACCESS_KEY_ID = "access key id"
+  AWS_ACCESS_KEY_SECRET = "access key secret"
   ```
 
 * Create environment
@@ -87,9 +87,24 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
 ## Run module with provided example in existing subnets
 
+* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/create_in_existing_subnets/vars.mk.sample):
+
   ```shell
-  #TO-DO
+  AWS_ACCESS_KEY = "access key id"
+  AWS_SECRET_KEY = "access key secret"
+  M_REGION="region of existing VPC"
+  M_VPC_ID="existing vpc id"
+  M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
+
+* Create environment
+
+  ```shell
+  cd examples/create_in_existing_subnets
+  make all
+  ```
+
+  This command will create AwsKS cluster in already existing subnets.
 
 ## Destroy EKS cluster
 
@@ -118,7 +133,7 @@ For more details check [documentation](https://github.com/terraform-aws-modules/
 
 ## Windows users
 
-This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder.
+This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder or ```examples/create_in_existing_subnets_devcontainer```.
 
 ## Module dependencies
 
