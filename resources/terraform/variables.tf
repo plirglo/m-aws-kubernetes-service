@@ -9,6 +9,18 @@ variable "name" {
   default     = "default"
 }
 
+variable "k8s_version" {
+  description = "Kubernetes version to install"
+  type        = string
+  default     = "1.18"
+}
+
+variable "autoscaler_version" {
+  description = "Kubernetes autoscaler version"
+  type        = string
+  default     = null
+}
+
 variable "vpc_id" {
   description = "VPC id to join to"
   type        = string
