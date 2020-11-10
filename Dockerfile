@@ -20,11 +20,7 @@ RUN apk add --update --no-cache make=4.3-r0 &&\
     tar -zxvf helm-v3.3.4-linux-amd64.tar.gz &&\
     mv linux-amd64/helm /usr/local/bin/helm &&\
     rm -rf linux-amd64 &&\
-    chmod +x /usr/local/bin/helm &&\
-    # Installing aws-iam-authenticator for helm charts deployment
-    wget https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.9/2020-08-04/bin/linux/amd64/aws-iam-authenticator \
-        -O /usr/local/bin/aws-iam-authenticator &&\
-    chmod +x /usr/local/bin/aws-iam-authenticator
+    chmod +x /usr/local/bin/helm
 
 ARG ARG_M_VERSION="unknown"
 ENV M_VERSION=$ARG_M_VERSION
