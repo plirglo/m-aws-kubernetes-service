@@ -1,5 +1,4 @@
 locals {
-  autoscaler_name               = "${var.name}-eks-autoscaler"
   k8s_service_account_namespace = "kube-system"
   k8s_service_account_name      = "cluster-autoscaler-aws-cluster-autoscaler"
 
