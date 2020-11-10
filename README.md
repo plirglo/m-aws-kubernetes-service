@@ -110,7 +110,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
   ```shell
   cd examples/basic_flow
-  make -k destroy
+  make destroy
   ```
 
 ## Release module
