@@ -1,7 +1,7 @@
 # https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html
 
 resource "aws_iam_role" "eks_nodes_iam_role" {
-  name = "eks-node-group-tuto"
+  name = "${var.name}-eks-node-group"
   assume_role_policy = data.aws_iam_policy_document.nodes_assume_role_policy.json
 }
 
