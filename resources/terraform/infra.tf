@@ -21,7 +21,7 @@ resource "aws_subnet" "eks_subnet" {
     name                                    = "${var.name}-eks-subnet${count.index}"
     cluster_name                            = var.name
     # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
-    "kubernetes.io/cluster/${var.name}-eks" = "shared"
+    "kubernetes.io/cluster/${module.control_plane.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"       = 1
   }
 }
