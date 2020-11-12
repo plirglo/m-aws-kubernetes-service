@@ -34,7 +34,6 @@ resource "aws_route_table_association" "private" {
 
 # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
 resource "aws_ec2_tag" "eks_vpc" {
-  count       = var.subnet_ids != null ? 0 : 1
   resource_id = data.aws_vpc.vpc.id
   key         = "kubernetes.io/cluster/${module.control_plane.cluster_name}"
   value       = "shared"
