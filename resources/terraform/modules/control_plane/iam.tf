@@ -1,8 +1,9 @@
 # https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
 
 resource "aws_iam_role" "eks_cluster_iam_role" {
-  name = "${var.name}-eks-cluster-iam-role"
   assume_role_policy = data.aws_iam_policy_document.cluster_assume_role_policy.json
+  name               = "${var.name}-eks-cluster-iam-role"
+  description        = "EKS cluster IAM role for cluster ${aws_eks_cluster.eks_cluster.name}"
 }
 
 data "aws_iam_policy_document" "cluster_assume_role_policy" {

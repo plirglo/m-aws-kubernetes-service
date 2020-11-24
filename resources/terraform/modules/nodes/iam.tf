@@ -1,8 +1,9 @@
 # https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html
 
 resource "aws_iam_role" "eks_nodes_iam_role" {
-  name = "${var.name}-eks-nodes-iam-role"
   assume_role_policy = data.aws_iam_policy_document.nodes_assume_role_policy.json
+  name               = "${var.name}-eks-nodes-iam-role"
+  description        = "EKS nodes IAM role for cluster ${var.cluster_name}"
 }
 
 data "aws_iam_policy_document" "nodes_assume_role_policy" {
