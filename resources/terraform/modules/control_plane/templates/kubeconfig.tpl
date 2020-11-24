@@ -3,7 +3,7 @@ apiVersion: v1
 clusters:
 - cluster:
     server: ${endpoint}
-    certificate-authority-data: ${certificate}
+    certificate-authority-data: ${certificate_data}
   name: kubernetes
 contexts:
 - context:
