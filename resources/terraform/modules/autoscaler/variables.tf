@@ -1,31 +1,11 @@
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
 variable "name" {
   description = "Prefix for resource names"
   type        = string
-}
-
-variable "k8s_version" {
-  description = "Kubernetes version to install"
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "VPC id to join to"
-  type        = string
-}
-
-variable "subnets" {
-  description = "List of subnets to use in EKS"
-  type        = list(string)
-}
-
-variable "worker_groups" {
-  type = list(object({
-    name                 = string
-    instance_type        = string
-    asg_desired_capacity = number
-    asg_min_size         = number
-    asg_max_size         = number
-  }))
 }
 
 variable "region" {
@@ -43,5 +23,15 @@ variable "autoscaler_version" {
 
 variable "autoscaler_chart_version" {
   description = "EKS chart version"
+  type        = string
+}
+
+variable "openid_connect_url" {
+  description = "OpenId connect provider url"
+  type        = string
+}
+
+variable "openid_connect_arn" {
+  description = "OpenId connect provider arn"
   type        = string
 }

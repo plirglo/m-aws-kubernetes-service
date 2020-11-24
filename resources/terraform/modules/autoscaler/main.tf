@@ -21,7 +21,7 @@ resource "helm_release" "cluster-autoscaler" {
   set {
     name  = "autoDiscovery.clusterName"
     type  = "string"
-    value = "${var.name}-eks"
+    value = var.cluster_name
   }
   set {
     name  = "autoDiscovery.enabled"
@@ -46,6 +46,6 @@ resource "helm_release" "cluster-autoscaler" {
   set {
     name  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
     type  = "string"
-    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.autoscaler_name}"
+    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${aws_iam_role.cluster_autoscaler.name}"
   }
 }

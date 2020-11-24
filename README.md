@@ -110,7 +110,7 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
   ```shell
   cd examples/basic_flow
-  make -k destroy
+  make destroy
   ```
 
 ## Release module
@@ -137,13 +137,15 @@ This module is designed for Linux/Unix development/usage only. If you need to de
 
 ## Module dependencies
 
-| Component                     | Version | Repo/Website                                                                                                | License                                                           |
-| ----------------------------- | ------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Terraform                     | 0.13.2  | https://www.terraform.io/                                                                                   | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform/blob/master/LICENSE) |
-| Terraform AWS provider        | 3.7.0   | https://github.com/terraform-providers/terraform-provider-aws                                               | [Mozilla Public License 2.0](https://github.com/terraform-providers/terraform-provider-aws/blob/master/LICENSE) |
-| Terraform Kubernetes provider | 1.13.2  | https://github.com/hashicorp/terraform-provider-kubernetes                                                  | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-kubernetes/blob/master/LICENSE) |
-| Terraform Helm Provider       | 1.3.1   | https://github.com/hashicorp/terraform-provider-helm                                                        | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-helm/blob/master/LICENSE) |
-| Terraform AWS EKS module      | 12.2.0  | https://github.com/terraform-aws-modules/terraform-aws-eks                                                  | [Apache License 2.0](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/LICENSE) |
-| Terraform AWS IAM module      | 2.21.0  | https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-assumable-role-with-oidc | [Apache License 2.0](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE) |
-| Make                          | 4.3     | https://www.gnu.org/software/make/                                                                          | [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.html) |
-| yq                            | 3.3.4   | https://github.com/mikefarah/yq/                                                                            | [MIT License](https://github.com/mikefarah/yq/blob/master/LICENSE) |
+| Component                       | Version | Repo/Website                                                                                                | License                                                           |
+| ------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Terraform                       | 0.13.2  | https://www.terraform.io/                                                                                   | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform/blob/master/LICENSE) |
+| Terraform AWS provider          | 3.7.0   | https://github.com/terraform-providers/terraform-provider-aws                                               | [Mozilla Public License 2.0](https://github.com/terraform-providers/terraform-provider-aws/blob/master/LICENSE) |
+| Terraform Kubernetes provider   | 1.13.2  | https://github.com/hashicorp/terraform-provider-kubernetes                                                  | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-kubernetes/blob/master/LICENSE) |
+| Terraform Helm Provider         | 1.3.1   | https://github.com/hashicorp/terraform-provider-helm                                                        | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-helm/blob/master/LICENSE) |
+| Terraform TLS provider          | 3.0.0   | https://github.com/hashicorp/terraform-provider-tls                                                         | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-tls/blob/master/LICENSE) |
+| Terraform Template Provider     | 2.2.0   | https://github.com/hashicorp/terraform-provider-template                                                    | [Mozilla Public License 2.0](https://github.com/hashicorp/terraform-provider-template/blob/master/LICENSE) |
+| Terraform Metrics Server Module | 0.9.0   | https://github.com/cookielab/terraform-kubernetes-metrics-server                                            | [MIT License](https://github.com/cookielab/terraform-kubernetes-metrics-server/blob/master/LICENSE.md) |
+| Cluster Autoscaler Helm Chart   | 7.3.4   | https://github.com/helm/charts/tree/master/stable/cluster-autoscaler (deprecated)                           | [Apache License 2.0](https://github.com/kubernetes/autoscaler/blob/master/LICENSE) |
+| Make                            | 4.3     | https://www.gnu.org/software/make/                                                                          | [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.html) |
+| yq                              | 3.3.4   | https://github.com/mikefarah/yq/                                                                            | [MIT License](https://github.com/mikefarah/yq/blob/master/LICENSE) |
