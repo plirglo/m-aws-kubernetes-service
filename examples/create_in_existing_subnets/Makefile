@@ -3,7 +3,7 @@ ROOT_DIR := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 AWSKS := epiphanyplatform/awsks:0.0.1
 
 #makes it easier to replace the value
-M_NAME            ?= awsks-example-tests
+M_NAME            ?= ks-example-tests
 M_SHARED_EXTERNAL ?= $(ROOT_DIR)/shared
 
 VMS_RSA_FILENAME ?= vms_rsa

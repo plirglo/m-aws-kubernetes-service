@@ -1,5 +1,10 @@
+variable "cluster_name" {
+  description = "Cluster name"
+  type        = string
+}
+
 variable "name" {
-  description = "Prefix for resource names"
+  description = "Prefix for resource names and tags"
   type        = string
 }
 

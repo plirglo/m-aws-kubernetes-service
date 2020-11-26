@@ -4,7 +4,7 @@ AWSBI := epiphanyplatform/awsbi:0.0.1
 AWSKS := epiphanyplatform/awsks:0.0.1
 
 #makes it easier to replace the value
-M_NAME            ?= awsks-basic-flow
+M_NAME            ?= ks-basic-flow
 M_SHARED_EXTERNAL ?= $(ROOT_DIR)/shared
 
 VMS_RSA_FILENAME ?= vms_rsa

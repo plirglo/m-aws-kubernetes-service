@@ -12,7 +12,8 @@ data "tls_certificate" "eks_tls" {
 }
 
 data "aws_eks_cluster_auth" "eks_auth" {
-  name = aws_eks_cluster.eks_cluster.name
+  name       = aws_eks_cluster.eks_cluster.name
+  depends_on = [aws_eks_cluster.eks_cluster]
 }
 
 # Enable control plane logging
@@ -23,7 +24,7 @@ resource "aws_cloudwatch_log_group" "eks_log_group" {
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name                      = "${var.name}-eks-cluster"
+  name                      = var.cluster_name
   version                   = var.k8s_version
   role_arn                  = aws_iam_role.eks_cluster_iam_role.arn
   enabled_cluster_log_types = ["api", "audit"]

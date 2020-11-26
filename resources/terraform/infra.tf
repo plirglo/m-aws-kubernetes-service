@@ -18,11 +18,11 @@ resource "aws_subnet" "eks_subnet" {
   cidr_block        = cidrsubnet(data.aws_vpc.vpc.cidr_block, 4, 15-count.index)
   vpc_id            = data.aws_vpc.vpc.id
   tags              = {
-    name                                    = "${var.name}-eks-subnet${count.index}"
-    cluster_name                            = var.name
+    name                                          = "${var.name}-eks-subnet${count.index}"
+    cluster_name                                  = var.name
     # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
-    "kubernetes.io/cluster/${module.control_plane.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"       = 1
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = 1
   }
 }
 
@@ -35,6 +35,6 @@ resource "aws_route_table_association" "private" {
 # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
 resource "aws_ec2_tag" "eks_vpc" {
   resource_id = data.aws_vpc.vpc.id
-  key         = "kubernetes.io/cluster/${module.control_plane.cluster_name}"
+  key         = "kubernetes.io/cluster/${local.cluster_name}"
   value       = "shared"
 }

@@ -1,4 +1,5 @@
 locals {
+  cluster_name                = "${var.name}-eks-cluster"
   subnet_ids                  = var.subnet_ids != null ? var.subnet_ids : aws_subnet.eks_subnet[*].id
   autoscaler_version          = var.autoscaler_version != null ? var.autoscaler_version : local.autoscaler_default_versions[var.k8s_version]
   autoscaler_default_versions = {

@@ -4,7 +4,7 @@ variable "cluster_name" {
 }
 
 variable "name" {
-  description = "Prefix for resource names"
+  description = "Prefix for resource names and tags"
   type        = string
 }
 
