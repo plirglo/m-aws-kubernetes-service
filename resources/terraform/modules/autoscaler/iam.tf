@@ -22,7 +22,8 @@ data "aws_iam_policy_document" "autoscaler_assume_role_policy" {
 resource "aws_iam_role" "cluster_autoscaler" {
   assume_role_policy = data.aws_iam_policy_document.autoscaler_assume_role_policy.json
   name               = "${var.name}-cluster-autoscaler"
-  description        = "EKS cluster-autoscaler IAM role for cluster ${var.cluster_name}"
+  description        = "EKS cluster-autoscaler IAM role for cluster ${var.name}"
+  tags               = local.tags
 }
 
 # https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html#ca-ng-considerations
@@ -44,7 +45,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
 resource "aws_iam_policy" "cluster_autoscaler" {
   name        = "${var.name}-cluster-autoscaler"
-  description = "EKS cluster-autoscaler IAM policy for cluster ${var.cluster_name}"
+  description = "EKS cluster-autoscaler IAM policy for cluster ${var.name}"
   policy      = data.aws_iam_policy_document.cluster_autoscaler.json
 }
 

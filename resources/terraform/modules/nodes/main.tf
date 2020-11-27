@@ -1,6 +1,6 @@
 resource "aws_eks_node_group" "eks_nodes" {
   count           = length(var.worker_groups)
-  cluster_name    = var.cluster_name
+  cluster_name    = var.name
   node_group_name = var.worker_groups[count.index].name == null ? "${var.name}-node-group${count.index}" : var.worker_groups[count.index].name
   node_role_arn   = aws_iam_role.eks_nodes_iam_role.arn
   subnet_ids      = var.subnet_ids
@@ -27,5 +27,5 @@ resource "aws_eks_node_group" "eks_nodes" {
 
   # Add necessary tags for cluster autoscaler
   # https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html#ca-ng-considerations
-  tags = local.tags
+  tags = local.eks_node_tags
 }

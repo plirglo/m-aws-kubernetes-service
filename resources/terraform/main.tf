@@ -1,7 +1,6 @@
 module "control_plane" {
   source       = "./modules/control_plane"
   name         = var.name
-  cluster_name = local.cluster_name
   k8s_version  = var.k8s_version
   subnet_ids   = local.subnet_ids
   providers    = {
@@ -14,11 +13,10 @@ module "control_plane" {
 module "nodes" {
   source        = "./modules/nodes"
   name          = var.name
-  cluster_name  = local.cluster_name
   subnet_ids    = local.subnet_ids
   worker_groups = var.worker_groups
   depends_on    = [module.control_plane]
-  providers = {
+  providers     = {
     aws = aws
   }
 }
@@ -26,7 +24,6 @@ module "nodes" {
 module "autoscaler" {
   source                   = "./modules/autoscaler"
   name                     = var.name
-  cluster_name             = local.cluster_name
   region                   = var.region
   openid_connect_arn       = module.control_plane.openid_connect_arn
   openid_connect_url       = module.control_plane.openid_connect_url
@@ -35,7 +32,7 @@ module "autoscaler" {
   depends_on               = [module.control_plane, module.nodes]
 
   # https://discuss.hashicorp.com/t/module-does-not-support-depends-on/11692/3
-  providers = {
+  providers                = {
     helm       = helm
     kubernetes = kubernetes
   }

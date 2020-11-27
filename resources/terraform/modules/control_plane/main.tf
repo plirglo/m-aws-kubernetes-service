@@ -21,13 +21,15 @@ data "aws_eks_cluster_auth" "eks_auth" {
 resource "aws_cloudwatch_log_group" "eks_log_group" {
   name              = "${var.name}-log-group"
   retention_in_days = 30
+  tags              = local.tags
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name                      = var.cluster_name
+  name                      = var.name
   version                   = var.k8s_version
   role_arn                  = aws_iam_role.eks_cluster_iam_role.arn
   enabled_cluster_log_types = ["api", "audit"]
+  tags                      = local.tags
 
   vpc_config {
     subnet_ids = var.subnet_ids

@@ -21,7 +21,7 @@ resource "helm_release" "cluster-autoscaler" {
   set {
     name  = "autoDiscovery.clusterName"
     type  = "string"
-    value = var.cluster_name
+    value = var.name
   }
   set {
     name  = "autoDiscovery.enabled"

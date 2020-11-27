@@ -1,8 +1,3 @@
-variable "cluster_name" {
-  description = "EKS cluster name"
-  type        = string
-}
-
 variable "name" {
   description = "Prefix for resource names and tags"
   type        = string
