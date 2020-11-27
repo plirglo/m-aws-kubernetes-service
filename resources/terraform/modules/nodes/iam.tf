@@ -3,7 +3,8 @@
 resource "aws_iam_role" "eks_nodes_iam_role" {
   assume_role_policy = data.aws_iam_policy_document.nodes_assume_role_policy.json
   name               = "${var.name}-eks-nodes-iam-role"
-  description        = "EKS nodes IAM role for cluster ${var.cluster_name}"
+  description        = "EKS nodes IAM role for cluster ${var.name}"
+  tags               = local.tags
 }
 
 data "aws_iam_policy_document" "nodes_assume_role_policy" {

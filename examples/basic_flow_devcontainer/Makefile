@@ -1,7 +1,7 @@
 ROOT_DIR := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 
 #makes it easier to replace the value
-M_NAME            ?= awsks-basic-flow
+M_NAME            ?= ks-basic-flow
 
 M_SHARED_EXTERNAL ?= $(ROOT_DIR)/shared
 
