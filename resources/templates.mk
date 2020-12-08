@@ -15,6 +15,10 @@ $(M_MODULE_SHORT):
   region: $(M_REGION)
   subnet_ids: $(M_SUBNET_IDS)
   private_route_table_id: $(M_PRIVATE_ROUTE_TABLE_ID)
+  disk_size: $(M_DISK_SIZE)
+  autoscaler_scale_down_utilization_threshold: $(M_AUTOSCALER_SCALE_DOWN_UTILIZATION_THRESHOLD)
+  ami_type: $(M_AMI_TYPE)
+  ec2_ssh_key: $(M_EC2_SSH_KEY)
 endef
 
 define M_STATE_INITIAL

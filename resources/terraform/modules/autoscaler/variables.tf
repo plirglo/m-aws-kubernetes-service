@@ -30,3 +30,8 @@ variable "openid_connect_arn" {
   description = "OpenId connect provider arn"
   type        = string
 }
+
+variable "autoscaler_scale_down_utilization_threshold" {
+  description = "Autoscaler scale down utilization threshold"
+  type        = string
+}

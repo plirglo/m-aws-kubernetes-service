@@ -16,20 +16,25 @@ module "nodes" {
   subnet_ids    = local.subnet_ids
   worker_groups = var.worker_groups
   depends_on    = [module.control_plane]
+  disk_size     = var.disk_size
+  ami_type      = var.ami_type
+  ec2_ssh_key   = var.ec2_ssh_key
+  
   providers     = {
     aws = aws
   }
 }
 
 module "autoscaler" {
-  source                   = "./modules/autoscaler"
-  name                     = var.name
-  region                   = var.region
-  openid_connect_arn       = module.control_plane.openid_connect_arn
-  openid_connect_url       = module.control_plane.openid_connect_url
-  autoscaler_version       = local.autoscaler_version
-  autoscaler_chart_version = "7.3.4"
-  depends_on               = [module.control_plane, module.nodes]
+  source                                      = "./modules/autoscaler"
+  name                                        = var.name
+  region                                      = var.region
+  openid_connect_arn                          = module.control_plane.openid_connect_arn
+  openid_connect_url                          = module.control_plane.openid_connect_url
+  autoscaler_version                          = local.autoscaler_version
+  autoscaler_chart_version                    = "7.3.4"
+  depends_on                                  = [module.control_plane, module.nodes]
+  autoscaler_scale_down_utilization_threshold = var.autoscaler_scale_down_utilization_threshold
 
   # https://discuss.hashicorp.com/t/module-does-not-support-depends-on/11692/3
   providers                = {

@@ -3,6 +3,10 @@ M_VPC_ID ?= unset
 M_SUBNET_IDS ?= null
 M_REGION ?= eu-central-1
 M_PRIVATE_ROUTE_TABLE_ID ?= unset
+M_DISK_SIZE ?= 36
+M_AUTOSCALER_SCALE_DOWN_UTILIZATION_THRESHOLD ?= 0.65
+M_EC2_SSH_KEY ?= null
+M_AMI_TYPE ?= AL2_x86_64
 
 # aws credentials
 M_AWS_ACCESS_KEY ?= unset
