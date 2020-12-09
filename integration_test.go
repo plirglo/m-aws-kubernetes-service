@@ -53,7 +53,8 @@ awsks:
   name: epiphany
   vpc_id: unset
   region: eu-central-1
-  public_subnet_id: unset
+  subnet_ids: null
+  private_route_table_id: unset
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -62,7 +63,8 @@ awsks:
   name: epiphany
   vpc_id: unset
   region: eu-central-1
-  public_subnet_id: unset
+  subnet_ids: null
+  private_route_table_id: unset
 `,
 			wantStateContent: `
 kind: state
@@ -72,7 +74,7 @@ awsks:
 		},
 		{
 			name: "init with variables",
-			initParams: []string{"M_NAME=value1", "M_VPC_ID=value2", "M_REGION=value3", "M_PUBLIC_SUBNET_ID=value4"},
+			initParams: []string{"M_NAME=value1", "M_VPC_ID=value2", "M_REGION=value3", "M_SUBNET_IDS=value4"},
 			stateLocation: "state.yml",
 			stateContent: ``,
 			wantOutput: `
@@ -87,7 +89,8 @@ awsks:
   name: value1
   vpc_id: value2
   region: value3
-  public_subnet_id: value4
+  subnet_ids: value4
+  private_route_table_id: unset
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -96,7 +99,8 @@ awsks:
   name: value1
   vpc_id: value2
   region: value3
-  public_subnet_id: value4
+  subnet_ids: value4
+  private_route_table_id: unset
 `,
 			wantStateContent: `
 kind: state
@@ -136,7 +140,8 @@ awsks:
   name: epiphany
   vpc_id: vpc-0baa2c4e9e48e608c
   region: eu-central-1
-  public_subnet_id: subnet-0137cf1e7921c1551
+  subnet_ids: null
+  private_route_table_id: unset
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -145,7 +150,8 @@ awsks:
   name: epiphany
   vpc_id: vpc-0baa2c4e9e48e608c
   region: eu-central-1
-  public_subnet_id: subnet-0137cf1e7921c1551
+  subnet_ids: null
+  private_route_table_id: unset
 `,
 			wantStateContent: `
 kind: state
@@ -219,82 +225,6 @@ awsks:
 			}
 		})
 	}
-}
-
-func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
-	if err := generateRsaKeyPair(sharedPath, "test_vms_rsa"); err != nil {
-		t.Fatalf("wasnt able to create rsa file: %s", err)
-	}
-
-	initCommand := []string{
-		"init",
-		"M_VMS_COUNT=0",
-		"M_PUBLIC_IPS=false",
-		fmt.Sprintf("M_NAME=eks-module-tests-%s", suffix),
-		"M_VMS_RSA=test_vms_rsa",
-	}
-
-	initOpts := &docker.RunOptions{
-		Command: initCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, initOpts)
-
-	planCommand := []string{"plan",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	planOpts := &docker.RunOptions{
-		Command: planCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, planOpts)
-
-	applyCommand := []string{"apply",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	applyOpts := &docker.RunOptions{
-		Command: applyCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, applyOpts)
-}
-
-func cleanupPlan(t *testing.T, sharedPath, awsAccessKey, awsSecretKey string) {
-	planDestroyCommand := []string{"plan-destroy",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	planDestroyOpts := &docker.RunOptions{
-		Command: planDestroyCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, planDestroyOpts)
-
-	destroyCommand := []string{"destroy",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	destroyOpts := &docker.RunOptions{
-		Command: destroyCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, destroyOpts)
 }
 
 func TestPlan(t *testing.T) {
@@ -471,6 +401,82 @@ func TestApply(t *testing.T) {
 
 	cleanupPlan(t, sharedPath, awsAccessKey, awsSecretKey)
 	cleanup(sharedPath)
+}
+
+func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
+	if err := generateRsaKeyPair(sharedPath, "test_vms_rsa"); err != nil {
+		t.Fatalf("wasnt able to create rsa file: %s", err)
+	}
+
+	initCommand := []string{
+		"init",
+		"M_VMS_COUNT=0",
+		"M_PUBLIC_IPS=false",
+		fmt.Sprintf("M_NAME=eks-module-tests-%s", suffix),
+		"M_VMS_RSA=test_vms_rsa",
+	}
+
+	initOpts := &docker.RunOptions{
+		Command: initCommand,
+		Remove:  true,
+		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
+	}
+
+	docker.Run(t, awsbiImageTag, initOpts)
+
+	planCommand := []string{"plan",
+		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
+		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
+	}
+
+	planOpts := &docker.RunOptions{
+		Command: planCommand,
+		Remove:  true,
+		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
+	}
+
+	docker.Run(t, awsbiImageTag, planOpts)
+
+	applyCommand := []string{"apply",
+		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
+		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
+	}
+
+	applyOpts := &docker.RunOptions{
+		Command: applyCommand,
+		Remove:  true,
+		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
+	}
+
+	docker.Run(t, awsbiImageTag, applyOpts)
+}
+
+func cleanupPlan(t *testing.T, sharedPath, awsAccessKey, awsSecretKey string) {
+	planDestroyCommand := []string{"plan-destroy",
+		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
+		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
+	}
+
+	planDestroyOpts := &docker.RunOptions{
+		Command: planDestroyCommand,
+		Remove:  true,
+		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
+	}
+
+	docker.Run(t, awsbiImageTag, planDestroyOpts)
+
+	destroyCommand := []string{"destroy",
+		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
+		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
+	}
+
+	destroyOpts := &docker.RunOptions{
+		Command: destroyCommand,
+		Remove:  true,
+		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
+	}
+
+	docker.Run(t, awsbiImageTag, destroyOpts)
 }
 
 func setup(suffix string) (string, error) {

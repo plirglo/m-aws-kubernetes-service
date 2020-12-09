@@ -32,7 +32,7 @@ build: guard-VERSION guard-IMAGE guard-USER
 #prepare AWS credentials file before running this target using `ACCESS_KEY=xxx SECRET_KEY=yyy make prepare-aws-credentials`
 test: test-prerequisite \
 	build
-	@go test -v -timeout 45m
+	@go test -v -timeout 90m
 
 test-release: test-prerequisite \
 	release
@@ -62,6 +62,7 @@ test-prerequisite: guard-AWS_ACCESS_KEY guard-AWS_SECRET_KEY \
 		needs-docker \
         needs-go \
         needs-kubectl \
+		needs-aws \
 		needs-aws-iam-authenticator
 
 needs-%:
