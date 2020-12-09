@@ -17,24 +17,20 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/gruntwork-io/terratest/modules/docker"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	//"github.com/gruntwork-io/terratest/modules/k8s"
 	"golang.org/x/crypto/ssh"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/resourcegroups"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 const (
 	awsbiImageTag = "epiphanyplatform/awsbi:0.0.1"
 	awsksImageTag = "epiphanyplatform/awsks:0.0.1"
-	awsTagName  = "resource_group"
-	awsTagValue = "bi-module"
-	moduleName  = "bi-module"
-	awsRegion   = "eu-central-1"
-	sshKeyName  = "vms_rsa"
-	retries     = 30
+	moduleName    = "eks-module-tests"
 )
 
 func TestInit(t *testing.T) {
@@ -249,7 +245,7 @@ func TestPlan(t *testing.T) {
 	}{
 		{
 			name: "plan",
-			initParams: []string{"M_NAME=eks-module-tests-plan"},
+			initParams: []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "plan")},
 			wantPlanOutputLastLine: `Plan: 29 to add, 0 to change, 0 to destroy.`,
 			wantTfPlanLocation: "awsks/terraform-apply.tfplan",
 		},
@@ -296,10 +292,11 @@ func TestPlan(t *testing.T) {
 		})
 	}
 
-	cleanupPlan(t, sharedPath, awsAccessKey, awsSecretKey)
+	cleanupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(sharedPath)
 }
 
+/*
 func TestApply(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	sharedPath := setupOutput(t, "apply")
@@ -311,7 +308,7 @@ func TestApply(t *testing.T) {
 	}{
 		{
 			name: "apply",
-			initParams: []string{"M_NAME=eks-module-tests-apply"},
+			initParams: []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "apply")},
 		},
 	}
 
@@ -398,11 +395,14 @@ func TestApply(t *testing.T) {
 		})
 	}
 
-	cleanupPlan(t, sharedPath, awsAccessKey, awsSecretKey)
+	cleanupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(sharedPath)
 }
+*/
 
 func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
+	cleanupPlan(t, suffix, sharedPath, awsAccessKey, awsSecretKey)
+
 	if err := generateRsaKeyPair(sharedPath, "test_vms_rsa"); err != nil {
 		t.Fatalf("wasnt able to create rsa file: %s", err)
 	}
@@ -411,7 +411,7 @@ func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey stri
 		"init",
 		"M_VMS_COUNT=0",
 		"M_PUBLIC_IPS=false",
-		fmt.Sprintf("M_NAME=eks-module-tests-%s", suffix),
+		fmt.Sprintf("M_NAME=%s-%s", moduleName, suffix),
 		"M_VMS_RSA=test_vms_rsa",
 	}
 
@@ -450,32 +450,8 @@ func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey stri
 	docker.Run(t, awsbiImageTag, applyOpts)
 }
 
-func cleanupPlan(t *testing.T, sharedPath, awsAccessKey, awsSecretKey string) {
-	planDestroyCommand := []string{"plan-destroy",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	planDestroyOpts := &docker.RunOptions{
-		Command: planDestroyCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, planDestroyOpts)
-
-	destroyCommand := []string{"destroy",
-		fmt.Sprintf("M_AWS_ACCESS_KEY=%s", awsAccessKey),
-		fmt.Sprintf("M_AWS_SECRET_KEY=%s", awsSecretKey),
-	}
-
-	destroyOpts := &docker.RunOptions{
-		Command: destroyCommand,
-		Remove:  true,
-		Volumes: []string{fmt.Sprintf("%s:/shared", sharedPath)},
-	}
-
-	docker.Run(t, awsbiImageTag, destroyOpts)
+func cleanupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
+	cleanupAWSResources(t,  "eu-central-1", fmt.Sprintf("%s-%s", moduleName, suffix), awsAccessKey, awsSecretKey)
 }
 
 func setupOutput(t *testing.T, suffix string) (string) {
@@ -550,11 +526,16 @@ func getAwsCreds(t *testing.T) (awsAccessKey, awsSecretKey string) {
 }
 
 
+//TODO: Move this to a separate module we can also use in AWSBI module tests.
+const (
+	retries = 30
+)
 
-
-
-func cleanupAWSResources(t *testing.T) {
-	newSession, errSession := session.NewSession(&aws.Config{Region: aws.String(awsRegion)})
+func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsSecretKey string) {
+	newSession, errSession := session.NewSession(&aws.Config{
+		Region: aws.String(awsRegion),
+		Credentials: credentials.NewStaticCredentials(awsAccessKey, awsSecretKey, ""),
+	})
 	if errSession != nil {
 		t.Fatalf("Cannot get session: %s", errSession)
 	}
@@ -600,7 +581,7 @@ func cleanupAWSResources(t *testing.T) {
 			removeEc2s(t, newSession, filtered)	
 		case "EIP":
 			t.Log("Releasing public EIPs.")
-			releaseAddresses(t, newSession)
+			releaseAddresses(t, newSession, moduleName)
 		case "RouteTable":
 			t.Log("RouteTable.")
 			removeRouteTables(t, newSession, filtered)
@@ -772,7 +753,7 @@ func removeSingleNatGatewayWithRetries(t *testing.T, ec2Client *ec2.EC2, ngIDToR
 
 		waitForNatGatewayDelete(t, ec2Client, ngIDToRemove)
 
-		t.Log("Nat Gateway: Deleting NAT Gateway. ", ngIDToRemove, " Retry: ", retry)
+		t.Log("Nat Gateway: Deleting NAT Gateway: ", ngIDToRemove, "- Retry: ", retry)
 		time.Sleep(5 * time.Second)
 	}
 }
@@ -896,15 +877,15 @@ func removeKeyPair(t *testing.T, session *session.Session, kpName string) {
 	t.Log("Key Pair: Deleting key pair: ", output)
 }
 
-func releaseAddresses(t *testing.T, session *session.Session) {
+func releaseAddresses(t *testing.T, session *session.Session, moduleName string) {
     ec2Client := ec2.New(session)
 
     eipDescInp := &ec2.DescribeAddressesInput {
         Filters: []*ec2.Filter{
             {
-                Name: aws.String("tag:" + awsTagName),
+                Name: aws.String("tag:resource_group"),
                 Values: []*string{
-                    aws.String(awsTagValue),
+                    aws.String(moduleName),
                 },
             },
         },
