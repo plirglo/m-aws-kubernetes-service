@@ -12,15 +12,6 @@ variable "worker_groups" {
     asg_min_size         = number
     asg_max_size         = number
   }))
-  default     = [
-    {
-      name                 = "default_wg"
-      instance_type        = "t2.small"
-      asg_desired_capacity = 1
-      asg_min_size         = 1
-      asg_max_size         = 1
-    }
-  ]
 }
 
 variable "subnet_ids" {
