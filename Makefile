@@ -62,8 +62,7 @@ test-prerequisite: guard-AWS_ACCESS_KEY guard-AWS_SECRET_KEY \
 		needs-docker \
         needs-go \
         needs-kubectl \
-		needs-aws \
-		needs-aws-iam-authenticator
+		needs-aws
 
 needs-%:
 	@which $*
