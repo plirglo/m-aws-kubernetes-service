@@ -30,7 +30,7 @@ import (
 const (
 	awsbiImageTag = "epiphanyplatform/awsbi:0.0.1"
 	awsksImageTag = "epiphanyplatform/awsks:0.0.1"
-	moduleName    = "eks-module-tests"
+	moduleName    = "eks-module"
 )
 
 func TestInit(t *testing.T) {
@@ -296,6 +296,8 @@ func TestPlan(t *testing.T) {
 	cleanupOutput(sharedPath)
 }
 
+//TODO: Enable when the following issue is fixed. 
+//      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/32
 /*
 func TestApply(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
@@ -526,7 +528,8 @@ func getAwsCreds(t *testing.T) (awsAccessKey, awsSecretKey string) {
 }
 
 
-//TODO: Move this to a separate module we can also use in AWSBI module tests.
+//TODO: Move this to a separate GO library so we share it between the AWSBI and AWSEKS modules
+//      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/31
 const (
 	retries = 30
 )
