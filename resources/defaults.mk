@@ -7,11 +7,18 @@ M_DISK_SIZE ?= 36
 M_AUTOSCALER_SCALE_DOWN_UTILIZATION_THRESHOLD ?= 0.65
 M_EC2_SSH_KEY ?= null
 M_AMI_TYPE ?= AL2_x86_64
-M_WORKER_GROUPS_NAME ?= default_wg
-M_WORKER_GROUPS_INSTANCE_TYPE ?= t2.small
-M_WORKER_GROUPS_ADG_DESIRED_CAPACITY ?= 1
-M_WORKER_GROUPS_ASG_MIN_SIZE ?= 1
-M_WORKER_GROUPS_ASG_MAX_SIZE ?= 1
+
+define _M_WORKER_GROUPS
+{
+  name: default_wg,
+  instance_type: t2.small,
+  asg_desired_capacity: 1,
+  asg_min_size: 1,
+  asg_max_size: 1,
+}
+endef
+
+M_WORKER_GROUPS ?= $(_M_WORKER_GROUPS)
 
 # aws credentials
 M_AWS_ACCESS_KEY ?= unset

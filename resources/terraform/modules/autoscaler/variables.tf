@@ -31,6 +31,7 @@ variable "openid_connect_arn" {
   type        = string
 }
 
+# https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-scale-down-work
 variable "autoscaler_scale_down_utilization_threshold" {
   description = "Autoscaler scale down utilization threshold"
   type        = string
