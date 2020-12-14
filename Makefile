@@ -26,7 +26,7 @@ build: guard-VERSION guard-IMAGE guard-USER
 		--build-arg ARG_M_VERSION=$(VERSION) \
 		--build-arg ARG_HOST_UID=$(HOST_UID) \
 		--build-arg ARG_HOST_GID=$(HOST_GID) \
-		-t $(USER)/$(IMAGE):$(VERSION) \
+		-t $(IMAGE_NAME) \
 		.
 
 #prepare AWS credentials file before running this target using `ACCESS_KEY=xxx SECRET_KEY=yyy make prepare-aws-credentials`
@@ -44,12 +44,12 @@ prepare-aws-credentials: guard-ACCESS_KEY guard-SECRET_KEY
 release: guard-VERSION guard-IMAGE guard-USER
 	docker build \
 		--build-arg ARG_M_VERSION=$(VERSION) \
-		-t $(USER)/$(IMAGE):$(VERSION) \
+		-t $(IMAGE_NAME) \
 		.
 
 metadata: guard-VERSION guard-IMAGE guard-USER
 	@docker run --rm \
-		-t $(USER)/$(IMAGE):$(VERSION) \
+		-t $(IMAGE_NAME) \
 		metadata
 
 guard-%:
@@ -60,8 +60,8 @@ guard-%:
 
 test-prerequisite: guard-AWS_ACCESS_KEY guard-AWS_SECRET_KEY \
 		needs-docker \
-        needs-go \
-        needs-kubectl \
+		needs-go \
+		needs-kubectl \
 		needs-aws
 
 needs-%:
