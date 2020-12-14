@@ -19,7 +19,7 @@ $(M_MODULE_SHORT):
   autoscaler_scale_down_utilization_threshold: $(M_AUTOSCALER_SCALE_DOWN_UTILIZATION_THRESHOLD)
   ami_type: $(M_AMI_TYPE)
   ec2_ssh_key: $(M_EC2_SSH_KEY)
-  worker_groups: [$(M_WORKER_GROUPS)]
+  worker_groups: $(M_WORKER_GROUPS)
 endef
 
 define M_STATE_INITIAL
