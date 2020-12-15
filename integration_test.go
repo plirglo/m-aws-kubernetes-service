@@ -301,6 +301,7 @@ func TestPlan(t *testing.T) {
 
 //TODO: Enable when the following issue is fixed. 
 //      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/32
+/*
 func TestApply(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	sharedPath := setupOutput(t, "apply")
@@ -402,6 +403,7 @@ func TestApply(t *testing.T) {
 	cleanupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(sharedPath)
 }
+*/
 
 func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
 	cleanupPlan(t, suffix, sharedPath, awsAccessKey, awsSecretKey)
