@@ -17,7 +17,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/gruntwork-io/terratest/modules/docker"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	//"github.com/gruntwork-io/terratest/modules/k8s"
 	"golang.org/x/crypto/ssh"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -1222,7 +1222,7 @@ func removeCluster(t *testing.T, session *session.Session, clusterName string) {
             case eks.ErrCodeServiceUnavailableException:
                 t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
             default:
-                fmt.Println(aerr.Error())
+                t.Fatal(aerr.Error())
             }
         } else {
             t.Fatal(err.Error())
@@ -1255,7 +1255,7 @@ func removeNodeGroup(t *testing.T, session *session.Session, clusterName string,
             case eks.ErrCodeInvalidParameterException:
                 t.Fatal(eks.ErrCodeInvalidParameterException, aerr.Error())
             default:
-                fmt.Println(aerr.Error())
+                t.Fatal(aerr.Error())
             }
         } else {
             t.Fatal(err.Error())
