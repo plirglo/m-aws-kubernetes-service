@@ -11,23 +11,23 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"time"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/go-test/deep"
 	"github.com/gruntwork-io/terratest/modules/docker"
-	//"github.com/gruntwork-io/terratest/modules/k8s"
-	"golang.org/x/crypto/ssh"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/eks"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go/service/resourcegroups"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/eks"
+	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/resourcegroups"
+	//"github.com/gruntwork-io/terratest/modules/k8s"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
@@ -37,7 +37,7 @@ const (
 )
 
 func TestInit(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		name               string
 		initParams         []string
 		stateLocation      string
@@ -48,10 +48,10 @@ func TestInit(t *testing.T) {
 		wantStateContent   string
 	}{
 		{
-			name: "init with defaults",
-			initParams: nil,
+			name:          "init with defaults",
+			initParams:    nil,
 			stateLocation: "state.yml",
-			stateContent: ``,
+			stateContent:  ``,
 			wantOutput: `
 #AWSKS | setup | ensure required directories
 #AWSKS | ensure-state-file | checks if state file exists
@@ -84,10 +84,10 @@ awsks:
 `,
 		},
 		{
-			name: "init with variables",
-			initParams: []string{"M_NAME=value1", "M_VPC_ID=value2", "M_REGION=value3", "M_SUBNET_IDS=value4"},
+			name:          "init with variables",
+			initParams:    []string{"M_NAME=value1", "M_VPC_ID=value2", "M_REGION=value3", "M_SUBNET_IDS=value4"},
 			stateLocation: "state.yml",
-			stateContent: ``,
+			stateContent:  ``,
 			wantOutput: `
 #AWSKS | setup | ensure required directories
 #AWSKS | ensure-state-file | checks if state file exists
@@ -120,8 +120,8 @@ awsks:
 `,
 		},
 		{
-			name: "init with state",
-			initParams: nil,
+			name:          "init with state",
+			initParams:    nil,
 			stateLocation: "state.yml",
 			stateContent: `
 kind: state
@@ -240,17 +240,17 @@ func TestPlan(t *testing.T) {
 	sharedPath := setupOutput(t, "plan")
 	setupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey)
 
-	tests := []struct{
+	tests := []struct {
 		name                   string
 		initParams             []string
 		wantPlanOutputLastLine string
 		wantTfPlanLocation     string
 	}{
 		{
-			name: "plan",
-			initParams: []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "plan")},
+			name:                   "plan",
+			initParams:             []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "plan")},
 			wantPlanOutputLastLine: `Plan: 29 to add, 0 to change, 0 to destroy.`,
-			wantTfPlanLocation: "awsks/terraform-apply.tfplan",
+			wantTfPlanLocation:     "awsks/terraform-apply.tfplan",
 		},
 	}
 
@@ -307,12 +307,12 @@ func TestApply(t *testing.T) {
 	sharedPath := setupOutput(t, "apply")
 	setupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
 
-	tests := []struct{
+	tests := []struct {
 		name       string
 		initParams []string
 	}{
 		{
-			name: "apply",
+			name:       "apply",
 			initParams: []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "apply")},
 		},
 	}
@@ -456,10 +456,10 @@ func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey stri
 }
 
 func cleanupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
-	cleanupAWSResources(t,  "eu-central-1", fmt.Sprintf("%s-%s", moduleName, suffix), awsAccessKey, awsSecretKey)
+	cleanupAWSResources(t, "eu-central-1", fmt.Sprintf("%s-%s", moduleName, suffix), awsAccessKey, awsSecretKey)
 }
 
-func setupOutput(t *testing.T, suffix string) (string) {
+func setupOutput(t *testing.T, suffix string) string {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("setupOutput() failed with: %v", err)
@@ -530,7 +530,6 @@ func getAwsCreds(t *testing.T) (awsAccessKey, awsSecretKey string) {
 	return
 }
 
-
 //TODO: Move this to a separate GO library so we share it between the AWSBI and AWSEKS modules
 //      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/31
 const (
@@ -539,7 +538,7 @@ const (
 
 func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsSecretKey string) {
 	newSession, errSession := session.NewSession(&aws.Config{
-		Region: aws.String(awsRegion),
+		Region:      aws.String(awsRegion),
 		Credentials: credentials.NewStaticCredentials(awsAccessKey, awsSecretKey, ""),
 	})
 	if errSession != nil {
@@ -573,9 +572,9 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 
 	resourcesTypesToRemove := []string{"Instance", "SecurityGroup", "NatGateway", "EIP", "InternetGateway", "Subnet", "RouteTable", "VPC"}
 	iamRolesToRemove := []string{
-	    fmt.Sprintf("%s-eks-cluster-iam-role", moduleName),
-	    fmt.Sprintf("%s-eks-nodes-iam-role", moduleName),
-	    fmt.Sprintf("%s-cluster-autoscaler", moduleName),
+		fmt.Sprintf("%s-eks-cluster-iam-role", moduleName),
+		fmt.Sprintf("%s-eks-nodes-iam-role", moduleName),
+		fmt.Sprintf("%s-cluster-autoscaler", moduleName),
 	}
 
 	for _, resourcesTypeToRemove := range resourcesTypesToRemove {
@@ -592,7 +591,7 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 		switch resourcesTypeToRemove {
 		case "Instance":
 			t.Log("Instance.")
-			removeEc2s(t, newSession, filtered)	
+			removeEc2s(t, newSession, filtered)
 		case "EIP":
 			t.Log("Releasing public EIPs.")
 			releaseAddresses(t, newSession, moduleName)
@@ -617,12 +616,12 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 		}
 	}
 
-    removeNodeGroup(t, newSession, clusterName, nodeGroupName)
-    removeCluster(t, newSession, clusterName)
-    removeRoles(t, newSession, iamRolesToRemove)
-    removeLogGroup(t, newSession, logGroupName)
-    removeResourceGroup(t, newSession, rgName)
-    removeKeyPair(t, newSession, kpName)
+	removeNodeGroup(t, newSession, clusterName, nodeGroupName)
+	removeCluster(t, newSession, clusterName)
+	removeRoles(t, newSession, iamRolesToRemove)
+	removeLogGroup(t, newSession, logGroupName)
+	removeResourceGroup(t, newSession, rgName)
+	removeKeyPair(t, newSession, kpName)
 }
 
 func removeEc2s(t *testing.T, session *session.Session, ec2sToRemove []*resourcegroups.ResourceIdentifier) {
@@ -852,64 +851,68 @@ func removeSubnet(t *testing.T, session *session.Session, subnetsToRemove []*res
 		subnetIDToRemove := strings.Split(*subnetToRemove.ResourceArn, "/")[1]
 		t.Log("Subnet: subnetIdToRemove: ", subnetIDToRemove)
 
-        // Force detach and remove ENIs
-        eniDescInp := &ec2.DescribeNetworkInterfacesInput {
-            Filters: []*ec2.Filter{
-                {
-                    Name: aws.String("subnet-id"),
-                    Values: []*string{
-                        aws.String(subnetIDToRemove),
-                    },
-                },
-            },
-        }
+		// Force detach and remove ENIs
+		eniDescInp := &ec2.DescribeNetworkInterfacesInput{
+			Filters: []*ec2.Filter{
+				{
+					Name: aws.String("subnet-id"),
+					Values: []*string{
+						aws.String(subnetIDToRemove),
+					},
+				},
+			},
+		}
 
-        describeEnis, err := ec2Client.DescribeNetworkInterfaces(eniDescInp)
-        if err != nil {
-            t.Fatalf("ENI: Cannot get ENI list for subnet %s: %s", subnetIDToRemove, err)
-        }
+		describeEnis, err := ec2Client.DescribeNetworkInterfaces(eniDescInp)
+		if err != nil {
+			t.Fatalf("ENI: Cannot get ENI list for subnet %s: %s", subnetIDToRemove, err)
+		}
 
-        dryRun := false
-        forceDetach := true
+		t.Log(describeEnis)
 
-        for _, eni := range describeEnis.NetworkInterfaces {
-            eniToDetachInp := &ec2.DetachNetworkInterfaceInput{
-                AttachmentId: eni.Attachment.AttachmentId,
-                DryRun: &dryRun,
-                Force: &forceDetach,
-            }
+		dryRun := false
+		forceDetach := true
 
-            eniToDeleteInp := &ec2.DeleteNetworkInterfaceInput{
-                DryRun: &dryRun,
-                NetworkInterfaceId: eni.NetworkInterfaceId,
-            }
+		for _, eni := range describeEnis.NetworkInterfaces {
+			if eni.Attachment != nil {
+				eniToDetachInp := &ec2.DetachNetworkInterfaceInput{
+					AttachmentId: eni.Attachment.AttachmentId,
+					DryRun:       &dryRun,
+					Force:        &forceDetach,
+				}
 
-            _, errDetach := ec2Client.DetachNetworkInterface(eniToDetachInp)
-            if errDetach != nil {
-                if aerr, ok := errDetach.(awserr.Error); ok {
-                    switch aerr.Code() {
-                    default:
-                        t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
-                    }
-                } else {
-                    t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, errDetach.Error())
-                }
-            }
-            t.Logf("ENI: Detached ENI with id %s", *eni.NetworkInterfaceId)
+				_, errDetach := ec2Client.DetachNetworkInterface(eniToDetachInp)
+				if errDetach != nil {
+					if aerr, ok := errDetach.(awserr.Error); ok {
+						switch aerr.Code() {
+						default:
+							t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
+						}
+					} else {
+						t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, errDetach.Error())
+					}
+				}
+				t.Logf("ENI: Detached ENI with id %s", *eni.NetworkInterfaceId)
+			}
 
-            _, errDelete := ec2Client.DeleteNetworkInterface(eniToDeleteInp)
-            if errDelete != nil {
-                if aerr, ok := errDelete.(awserr.Error); ok {
-                    switch aerr.Code() {
-                    default:
-                        t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
-                    }
-                } else {
-                    t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, errDelete.Error())
-                }
-            }
-            t.Logf("ENI: Removed ENI with id %s", *eni.NetworkInterfaceId)
-        }
+			eniToDeleteInp := &ec2.DeleteNetworkInterfaceInput{
+				DryRun:             &dryRun,
+				NetworkInterfaceId: eni.NetworkInterfaceId,
+			}
+
+			_, errDelete := ec2Client.DeleteNetworkInterface(eniToDeleteInp)
+			if errDelete != nil {
+				if aerr, ok := errDelete.(awserr.Error); ok {
+					switch aerr.Code() {
+					default:
+						t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
+					}
+				} else {
+					t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, errDelete.Error())
+				}
+			}
+			t.Logf("ENI: Removed ENI with id %s", *eni.NetworkInterfaceId)
+		}
 
 		subnetInp := &ec2.DeleteSubnetInput{
 			SubnetId: &subnetIDToRemove,
@@ -956,53 +959,53 @@ func removeKeyPair(t *testing.T, session *session.Session, kpName string) {
 }
 
 func releaseAddresses(t *testing.T, session *session.Session, moduleName string) {
-    ec2Client := ec2.New(session)
+	ec2Client := ec2.New(session)
 
-    eipDescInp := &ec2.DescribeAddressesInput {
-        Filters: []*ec2.Filter{
-            {
-                Name: aws.String("tag:resource_group"),
-                Values: []*string{
-                    aws.String(moduleName),
-                },
-            },
-        },
-    }
+	eipDescInp := &ec2.DescribeAddressesInput{
+		Filters: []*ec2.Filter{
+			{
+				Name: aws.String("tag:resource_group"),
+				Values: []*string{
+					aws.String(moduleName),
+				},
+			},
+		},
+	}
 
-    describeEips, err := ec2Client.DescribeAddresses(eipDescInp)
-    if err != nil {
-        t.Fatalf("EIP: Cannot get EIP list: %s", err)
-    }
+	describeEips, err := ec2Client.DescribeAddresses(eipDescInp)
+	if err != nil {
+		t.Fatalf("EIP: Cannot get EIP list: %s", err)
+	}
 
-    for _, eip := range describeEips.Addresses {
+	for _, eip := range describeEips.Addresses {
 
-        t.Log("EIP: Releasing EIP with AllocationId: ", *eip.AllocationId)
+		t.Log("EIP: Releasing EIP with AllocationId: ", *eip.AllocationId)
 
-        eipToReleaseInp := &ec2.ReleaseAddressInput{
-            AllocationId: eip.AllocationId,
-        }
+		eipToReleaseInp := &ec2.ReleaseAddressInput{
+			AllocationId: eip.AllocationId,
+		}
 
-        found := true
-        for retry := 0; retry <= retries && found; retry++ {
-            _, err := ec2Client.ReleaseAddress(eipToReleaseInp)
-            if err != nil {
-                if aerr, ok := err.(awserr.Error); ok {
-                    if aerr.Code() == "InvalidAllocationID.NotFound" {
-                        t.Log("EIP: Element not found.", err)
-                        found = false
-                        continue
-                    }
-                    if aerr.Code() != "AuthFailure" && aerr.Code() != "InvalidAllocationID.NotFound" {
-                        t.Fatalf("EIP: Releasing EIP error: %s", err)
-                    }
-                } else {
-                    t.Fatalf("EIP: There was an error: %s", err.Error())
-                }
-            }
-            t.Log("EIP: Releasing EIP. Retry: ", retry)
-            time.Sleep(5 * time.Second)
-        }
-    }
+		found := true
+		for retry := 0; retry <= retries && found; retry++ {
+			_, err := ec2Client.ReleaseAddress(eipToReleaseInp)
+			if err != nil {
+				if aerr, ok := err.(awserr.Error); ok {
+					if aerr.Code() == "InvalidAllocationID.NotFound" {
+						t.Log("EIP: Element not found.", err)
+						found = false
+						continue
+					}
+					if aerr.Code() != "AuthFailure" && aerr.Code() != "InvalidAllocationID.NotFound" {
+						t.Fatalf("EIP: Releasing EIP error: %s", err)
+					}
+				} else {
+					t.Fatalf("EIP: There was an error: %s", err.Error())
+				}
+			}
+			t.Log("EIP: Releasing EIP. Retry: ", retry)
+			time.Sleep(5 * time.Second)
+		}
+	}
 }
 
 func removeResourceGroup(t *testing.T, session *session.Session, rgToRemoveName string) {
@@ -1030,237 +1033,175 @@ func removeResourceGroup(t *testing.T, session *session.Session, rgToRemoveName 
 }
 
 func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
-    iamClient := iam.New(session)
+	iamClient := iam.New(session)
 
-    for _, roleName := range roleNames {
+	for _, roleName := range roleNames {
 
-        t.Log("IAM: Role name to remove: ", roleName)
+		t.Log("IAM: Role name to remove: ", roleName)
 
-        roleListIn := &iam.ListAttachedRolePoliciesInput{
-            RoleName: aws.String(roleName),
-        }
+		roleListIn := &iam.ListAttachedRolePoliciesInput{
+			RoleName: aws.String(roleName),
+		}
 
-        // List managed policies for role
-        policies, errPolicyList := iamClient.ListAttachedRolePolicies(roleListIn)
-        if errPolicyList != nil {
-            if aerr, ok := errPolicyList.(awserr.Error); ok {
-                switch aerr.Code() {
-                case iam.ErrCodeNoSuchEntityException:
-                    t.Log("IAM: No role to remove: ", roleName)
-                    continue
-                case iam.ErrCodeInvalidInputException:
-                    t.Fatal(iam.ErrCodeInvalidInputException, aerr.Error())
-                case iam.ErrCodeServiceFailureException:
-                    t.Fatal(iam.ErrCodeServiceFailureException, aerr.Error())
-                default:
-                    t.Fatal(aerr.Error())
-                }
-            } else {
-                t.Fatal(errPolicyList.Error())
-            }
-        }
+		// List managed policies for role
+		policies, errPolicyList := iamClient.ListAttachedRolePolicies(roleListIn)
+		if errPolicyList != nil {
+			if aerr, ok := errPolicyList.(awserr.Error); ok {
+				switch aerr.Code() {
+				case iam.ErrCodeNoSuchEntityException:
+					t.Log("IAM: No role to remove: ", roleName)
+					continue
+				default:
+					t.Fatal(aerr.Error())
+				}
+			} else {
+				t.Fatal(errPolicyList.Error())
+			}
+		}
 
-        // Detach managed polices from role
-        for _, policy := range policies.AttachedPolicies {
+		// Detach managed polices from role
+		for _, policy := range policies.AttachedPolicies {
 
-            policyDetachIn := &iam.DetachRolePolicyInput{
-                PolicyArn: aws.String(*policy.PolicyArn),
-                RoleName: aws.String(roleName),
-            }
+			policyDetachIn := &iam.DetachRolePolicyInput{
+				PolicyArn: aws.String(*policy.PolicyArn),
+				RoleName:  aws.String(roleName),
+			}
 
-            _, errDetach := iamClient.DetachRolePolicy(policyDetachIn)
-            if errDetach != nil {
-                if aerr, ok := errDetach.(awserr.Error); ok {
-                    switch aerr.Code() {
-                    case iam.ErrCodeNoSuchEntityException:
-                        t.Fatal(iam.ErrCodeNoSuchEntityException, aerr.Error())
-                    case iam.ErrCodeLimitExceededException:
-                        t.Fatal(iam.ErrCodeLimitExceededException, aerr.Error())
-                    case iam.ErrCodeInvalidInputException:
-                        t.Fatal(iam.ErrCodeInvalidInputException, aerr.Error())
-                    case iam.ErrCodeUnmodifiableEntityException:
-                        t.Fatal(iam.ErrCodeUnmodifiableEntityException, aerr.Error())
-                    case iam.ErrCodeServiceFailureException:
-                        t.Fatal(iam.ErrCodeServiceFailureException, aerr.Error())
-                    default:
-                        t.Fatal(aerr.Error())
-                    }
-                } else {
-                    t.Fatal(errDetach.Error())
-                }
-            }
-        }
+			_, errDetach := iamClient.DetachRolePolicy(policyDetachIn)
+			if errDetach != nil {
+				if aerr, ok := errDetach.(awserr.Error); ok {
+					switch aerr.Code() {
+					default:
+						t.Fatal(aerr.Error())
+					}
+				} else {
+					t.Fatal(errDetach.Error())
+				}
+			}
+		}
 
-        roleInlineListIn := &iam.ListRolePoliciesInput{
-            RoleName: aws.String(roleName),
-        }
+		roleInlineListIn := &iam.ListRolePoliciesInput{
+			RoleName: aws.String(roleName),
+		}
 
 		// List inline policies for role
-        inlinePolicies, errPolicyInlineList := iamClient.ListRolePolicies(roleInlineListIn)
-        if errPolicyInlineList != nil {
-            if aerr, ok := errPolicyInlineList.(awserr.Error); ok {
-                switch aerr.Code() {
-                case iam.ErrCodeNoSuchEntityException:
-                    t.Fatal(iam.ErrCodeNoSuchEntityException, aerr.Error())
-                case iam.ErrCodeServiceFailureException:
-                    t.Fatal(iam.ErrCodeServiceFailureException, aerr.Error())
-                default:
-                    t.Fatal(aerr.Error())
-                }
-            } else {
-                t.Fatal(errPolicyInlineList.Error())
-            }
-        }
+		inlinePolicies, errPolicyInlineList := iamClient.ListRolePolicies(roleInlineListIn)
+		if errPolicyInlineList != nil {
+			if aerr, ok := errPolicyInlineList.(awserr.Error); ok {
+				switch aerr.Code() {
+				default:
+					t.Fatal(aerr.Error())
+				}
+			} else {
+				t.Fatal(errPolicyInlineList.Error())
+			}
+		}
 
-        // Detach inline polices from role
-        for _, inlinePolicy := range inlinePolicies.PolicyNames {
+		// Detach inline polices from role
+		for _, inlinePolicy := range inlinePolicies.PolicyNames {
 
-            policyDeleteIn := &iam.DeleteRolePolicyInput{
-                PolicyName: aws.String(*inlinePolicy),
-                RoleName: aws.String(roleName),
-            }
+			policyDeleteIn := &iam.DeleteRolePolicyInput{
+				PolicyName: aws.String(*inlinePolicy),
+				RoleName:   aws.String(roleName),
+			}
 
-            _, errDelete := iamClient.DeleteRolePolicy(policyDeleteIn)
-            if errDelete != nil {
-                if aerr, ok := errDelete.(awserr.Error); ok {
-                    switch aerr.Code() {
-                    case iam.ErrCodeNoSuchEntityException:
-                        t.Fatal(iam.ErrCodeNoSuchEntityException, aerr.Error())
-                    case iam.ErrCodeLimitExceededException:
-                        t.Fatal(iam.ErrCodeLimitExceededException, aerr.Error())
-                    case iam.ErrCodeUnmodifiableEntityException:
-                        t.Fatal(iam.ErrCodeUnmodifiableEntityException, aerr.Error())
-                    case iam.ErrCodeServiceFailureException:
-                        t.Fatal(iam.ErrCodeServiceFailureException, aerr.Error())
-                    default:
-                        t.Fatal(aerr.Error())
-                    }
-                } else {
-                    t.Fatal(errDelete.Error())
-                }
-            }
+			_, errDelete := iamClient.DeleteRolePolicy(policyDeleteIn)
+			if errDelete != nil {
+				if aerr, ok := errDelete.(awserr.Error); ok {
+					switch aerr.Code() {
+					default:
+						t.Fatal(aerr.Error())
+					}
+				} else {
+					t.Fatal(errDelete.Error())
+				}
+			}
 		}
 
 		roleDelIn := &iam.DeleteRoleInput{
-            RoleName: aws.String(roleName),
-        }
+			RoleName: aws.String(roleName),
+		}
 
-        // Delete role
-        _, errDeleteRole := iamClient.DeleteRole(roleDelIn)
-        if errDeleteRole != nil {
-            if aerr, ok := errDeleteRole.(awserr.Error); ok {
-                switch aerr.Code() {
-                case iam.ErrCodeNoSuchEntityException:
-                    t.Fatal(iam.ErrCodeNoSuchEntityException, aerr.Error())
-                case iam.ErrCodeDeleteConflictException:
-                    t.Fatal(iam.ErrCodeDeleteConflictException, aerr.Error())
-                case iam.ErrCodeLimitExceededException:
-                    t.Fatal(iam.ErrCodeLimitExceededException, aerr.Error())
-                case iam.ErrCodeUnmodifiableEntityException:
-                    t.Fatal(iam.ErrCodeUnmodifiableEntityException, aerr.Error())
-                case iam.ErrCodeConcurrentModificationException:
-                    t.Fatal(iam.ErrCodeConcurrentModificationException, aerr.Error())
-                case iam.ErrCodeServiceFailureException:
-                    t.Fatal(iam.ErrCodeServiceFailureException, aerr.Error())
-                default:
-                    t.Fatal(aerr.Error())
-                }
-            } else {
-                t.Fatal(errDeleteRole.Error())
-            }
-        }
-    }
+		// Delete role
+		_, errDeleteRole := iamClient.DeleteRole(roleDelIn)
+		if errDeleteRole != nil {
+			if aerr, ok := errDeleteRole.(awserr.Error); ok {
+				switch aerr.Code() {
+				default:
+					t.Fatal(aerr.Error())
+				}
+			} else {
+				t.Fatal(errDeleteRole.Error())
+			}
+		}
+	}
 
-    return
+	return
 }
 
 func removeLogGroup(t *testing.T, session *session.Session, groupName string) {
-    logsClient := cloudwatchlogs.New(session)
-    logGroupDelIn := &cloudwatchlogs.DeleteLogGroupInput{
-        LogGroupName: aws.String(groupName),
-    }
-    _, errLogGroupDel := logsClient.DeleteLogGroup(logGroupDelIn)
-    if errLogGroupDel != nil {
-        if aerr, ok := errLogGroupDel.(awserr.Error); ok {
-            switch aerr.Code() {
-            case cloudwatchlogs.ErrCodeResourceNotFoundException:
-                t.Log("CloudWatch: No log group to remove: ", groupName)
-            case cloudwatchlogs.ErrCodeInvalidParameterException:
-                t.Fatal(cloudwatchlogs.ErrCodeInvalidParameterException, aerr.Error())
-            case cloudwatchlogs.ErrCodeOperationAbortedException:
-                t.Fatal(cloudwatchlogs.ErrCodeOperationAbortedException, aerr.Error())
-            case cloudwatchlogs.ErrCodeServiceUnavailableException:
-                t.Fatal(cloudwatchlogs.ErrCodeServiceUnavailableException, aerr.Error())
-            default:
-                t.Fatal(aerr.Error())
-            }
-        } else {
-            t.Fatal(errLogGroupDel.Error())
-        }
-    }
+	logsClient := cloudwatchlogs.New(session)
+	logGroupDelIn := &cloudwatchlogs.DeleteLogGroupInput{
+		LogGroupName: aws.String(groupName),
+	}
+	_, errLogGroupDel := logsClient.DeleteLogGroup(logGroupDelIn)
+	if errLogGroupDel != nil {
+		if aerr, ok := errLogGroupDel.(awserr.Error); ok {
+			switch aerr.Code() {
+			case cloudwatchlogs.ErrCodeResourceNotFoundException:
+				t.Log("CloudWatch: No log group to remove: ", groupName)
+			default:
+				t.Fatal(aerr.Error())
+			}
+		} else {
+			t.Fatal(errLogGroupDel.Error())
+		}
+	}
 
-    return
+	return
 }
 
 func removeCluster(t *testing.T, session *session.Session, clusterName string) {
-    eksClient := eks.New(session)
-    eksDelIn := &eks.DeleteClusterInput{
-        Name: aws.String(clusterName),
-    }
-    _, err := eksClient.DeleteCluster(eksDelIn)
-    if err != nil {
-        if aerr, ok := err.(awserr.Error); ok {
-            switch aerr.Code() {
-            case eks.ErrCodeResourceNotFoundException:
-                t.Log("EKS: no cluster resource found with name ", clusterName)
-            case eks.ErrCodeResourceInUseException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeClientException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeServerException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeServiceUnavailableException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            default:
-                t.Fatal(aerr.Error())
-            }
-        } else {
-            t.Fatal(err.Error())
-        }
-    }
+	eksClient := eks.New(session)
+	eksDelIn := &eks.DeleteClusterInput{
+		Name: aws.String(clusterName),
+	}
+	_, err := eksClient.DeleteCluster(eksDelIn)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case eks.ErrCodeResourceNotFoundException:
+				t.Log("EKS: no cluster resource found with name ", clusterName)
+			default:
+				t.Fatal(aerr.Error())
+			}
+		} else {
+			t.Fatal(err.Error())
+		}
+	}
 
-    return
+	return
 }
 
 func removeNodeGroup(t *testing.T, session *session.Session, clusterName string, nodeGroupName string) {
-    eksClient := eks.New(session)
-    ngDelIn := &eks.DeleteNodegroupInput{
-        ClusterName: aws.String(clusterName),
-        NodegroupName: aws.String(nodeGroupName),
-    }
-    _, err := eksClient.DeleteNodegroup(ngDelIn)
-    if err != nil {
-        if aerr, ok := err.(awserr.Error); ok {
-            switch aerr.Code() {
-            case eks.ErrCodeResourceNotFoundException:
-                t.Log("EKS: no RG resource found with name ", nodeGroupName)
-            case eks.ErrCodeResourceInUseException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeClientException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeServerException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeServiceUnavailableException:
-                t.Fatal(eks.ErrCodeResourceInUseException, aerr.Error())
-            case eks.ErrCodeInvalidParameterException:
-                t.Fatal(eks.ErrCodeInvalidParameterException, aerr.Error())
-            default:
-                t.Fatal(aerr.Error())
-            }
-        } else {
-            t.Fatal(err.Error())
-        }
-    }
+	eksClient := eks.New(session)
+	ngDelIn := &eks.DeleteNodegroupInput{
+		ClusterName:   aws.String(clusterName),
+		NodegroupName: aws.String(nodeGroupName),
+	}
+	_, err := eksClient.DeleteNodegroup(ngDelIn)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case eks.ErrCodeResourceNotFoundException:
+				t.Log("EKS: no RG resource found with name ", nodeGroupName)
+			default:
+				t.Fatal(aerr.Error())
+			}
+		} else {
+			t.Fatal(err.Error())
+		}
+	}
 
-    return
+	return
 }
