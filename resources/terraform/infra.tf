@@ -18,7 +18,7 @@ resource "aws_subnet" "eks_subnet" {
   cidr_block        = cidrsubnet(data.aws_vpc.vpc.cidr_block, 4, 15-count.index)
   vpc_id            = data.aws_vpc.vpc.id
   tags              = {
-    name                                = "${var.name}-eks-subnet${count.index}"
+    Name                                = "${var.name}-eks-subnet${count.index}"
     resource_group                      = var.name
     # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
     "kubernetes.io/cluster/${var.name}" = "shared"
