@@ -15,8 +15,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-test/deep"
-	"github.com/gruntwork-io/terratest/modules/docker"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -26,6 +24,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/eks"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/resourcegroups"
+	"github.com/go-test/deep"
+	"github.com/gruntwork-io/terratest/modules/docker"
 	//"github.com/gruntwork-io/terratest/modules/k8s"
 	"golang.org/x/crypto/ssh"
 )
@@ -883,14 +883,7 @@ func removeSubnet(t *testing.T, session *session.Session, subnetsToRemove []*res
 
 				_, errDetach := ec2Client.DetachNetworkInterface(eniToDetachInp)
 				if errDetach != nil {
-					if aerr, ok := errDetach.(awserr.Error); ok {
-						switch aerr.Code() {
-						default:
-							t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
-						}
-					} else {
-						t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, errDetach.Error())
-					}
+					t.Fatalf("ENI: Cannot detach ENI with ID %s: %s", *eni.NetworkInterfaceId, errDetach.Error())
 				}
 				t.Logf("ENI: Detached ENI with id %s", *eni.NetworkInterfaceId)
 			}
@@ -902,14 +895,7 @@ func removeSubnet(t *testing.T, session *session.Session, subnetsToRemove []*res
 
 			_, errDelete := ec2Client.DeleteNetworkInterface(eniToDeleteInp)
 			if errDelete != nil {
-				if aerr, ok := errDelete.(awserr.Error); ok {
-					switch aerr.Code() {
-					default:
-						t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, aerr.Error())
-					}
-				} else {
-					t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, errDelete.Error())
-				}
+				t.Fatalf("ENI: Cannot delete ENI with ID %s: %s", *eni.NetworkInterfaceId, errDelete.Error())
 			}
 			t.Logf("ENI: Removed ENI with id %s", *eni.NetworkInterfaceId)
 		}
@@ -1047,11 +1033,10 @@ func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
 		policies, errPolicyList := iamClient.ListAttachedRolePolicies(roleListIn)
 		if errPolicyList != nil {
 			if aerr, ok := errPolicyList.(awserr.Error); ok {
-				switch aerr.Code() {
-				case iam.ErrCodeNoSuchEntityException:
+				if aerr.Code() == iam.ErrCodeNoSuchEntityException {
 					t.Log("IAM: No role to remove: ", roleName)
 					continue
-				default:
+				} else {
 					t.Fatal(aerr.Error())
 				}
 			} else {
@@ -1069,14 +1054,7 @@ func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
 
 			_, errDetach := iamClient.DetachRolePolicy(policyDetachIn)
 			if errDetach != nil {
-				if aerr, ok := errDetach.(awserr.Error); ok {
-					switch aerr.Code() {
-					default:
-						t.Fatal(aerr.Error())
-					}
-				} else {
-					t.Fatal(errDetach.Error())
-				}
+				t.Fatal(errDetach.Error())
 			}
 		}
 
@@ -1087,14 +1065,7 @@ func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
 		// List inline policies for role
 		inlinePolicies, errPolicyInlineList := iamClient.ListRolePolicies(roleInlineListIn)
 		if errPolicyInlineList != nil {
-			if aerr, ok := errPolicyInlineList.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					t.Fatal(aerr.Error())
-				}
-			} else {
-				t.Fatal(errPolicyInlineList.Error())
-			}
+			t.Fatal(errPolicyInlineList.Error())
 		}
 
 		// Detach inline polices from role
@@ -1107,14 +1078,7 @@ func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
 
 			_, errDelete := iamClient.DeleteRolePolicy(policyDeleteIn)
 			if errDelete != nil {
-				if aerr, ok := errDelete.(awserr.Error); ok {
-					switch aerr.Code() {
-					default:
-						t.Fatal(aerr.Error())
-					}
-				} else {
-					t.Fatal(errDelete.Error())
-				}
+				t.Fatal(errDelete.Error())
 			}
 		}
 
@@ -1125,14 +1089,7 @@ func removeRoles(t *testing.T, session *session.Session, roleNames []string) {
 		// Delete role
 		_, errDeleteRole := iamClient.DeleteRole(roleDelIn)
 		if errDeleteRole != nil {
-			if aerr, ok := errDeleteRole.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					t.Fatal(aerr.Error())
-				}
-			} else {
-				t.Fatal(errDeleteRole.Error())
-			}
+			t.Fatal(errDeleteRole.Error())
 		}
 	}
 
@@ -1147,10 +1104,9 @@ func removeLogGroup(t *testing.T, session *session.Session, groupName string) {
 	_, errLogGroupDel := logsClient.DeleteLogGroup(logGroupDelIn)
 	if errLogGroupDel != nil {
 		if aerr, ok := errLogGroupDel.(awserr.Error); ok {
-			switch aerr.Code() {
-			case cloudwatchlogs.ErrCodeResourceNotFoundException:
+			if aerr.Code() == cloudwatchlogs.ErrCodeResourceNotFoundException {
 				t.Log("CloudWatch: No log group to remove: ", groupName)
-			default:
+			} else {
 				t.Fatal(aerr.Error())
 			}
 		} else {
@@ -1169,10 +1125,9 @@ func removeCluster(t *testing.T, session *session.Session, clusterName string) {
 	_, err := eksClient.DeleteCluster(eksDelIn)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case eks.ErrCodeResourceNotFoundException:
+			if aerr.Code() == eks.ErrCodeResourceNotFoundException {
 				t.Log("EKS: no cluster resource found with name ", clusterName)
-			default:
+			} else {
 				t.Fatal(aerr.Error())
 			}
 		} else {
@@ -1192,10 +1147,9 @@ func removeNodeGroup(t *testing.T, session *session.Session, clusterName string,
 	_, err := eksClient.DeleteNodegroup(ngDelIn)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case eks.ErrCodeResourceNotFoundException:
+			if aerr.Code() == eks.ErrCodeResourceNotFoundException {
 				t.Log("EKS: no RG resource found with name ", nodeGroupName)
-			default:
+			} else {
 				t.Fatal(aerr.Error())
 			}
 		} else {
