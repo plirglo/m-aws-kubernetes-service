@@ -31,13 +31,12 @@ import (
 )
 
 const (
-	awsbiImageTag = "epiphanyplatform/awsbi:0.0.1"
-	awsksImageTag = "epiphanyplatform/awsks:0.0.1"
 	moduleName    = "eks-module"
 	retries       = 30
 )
 
 func TestInit(t *testing.T) {
+	_, awsksImageTag := getImageTags(t)
 	tests := []struct {
 		name               string
 		initParams         []string
@@ -238,8 +237,9 @@ awsks:
 
 func TestPlan(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
+	awsbiImageTag, awsksImageTag := getImageTags(t)
 	sharedPath := setupOutput(t, "plan")
-	setupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey)
+	setupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name                   string
@@ -304,8 +304,9 @@ func TestApply(t *testing.T) {
 	t.Skip() //TODO: Enable when the following issue is fixed: https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/32
 
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
+	awsbiImageTag, awsksImageTag := getImageTags(t)
 	sharedPath := setupOutput(t, "apply")
-	setupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
+	setupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name       string
@@ -404,7 +405,7 @@ func TestApply(t *testing.T) {
 	cleanupOutput(sharedPath)
 }
 
-func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
+func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag string) {
 	cleanupPlan(t, suffix, sharedPath, awsAccessKey, awsSecretKey)
 
 	if err := generateRsaKeyPair(sharedPath, "test_vms_rsa"); err != nil {
@@ -524,6 +525,20 @@ func getAwsCreds(t *testing.T) (awsAccessKey, awsSecretKey string) {
 	awsSecretKey = os.Getenv("AWS_SECRET_KEY")
 	if len(awsSecretKey) == 0 {
 		t.Fatalf("expected non-empty AWS_SECRET_KEY environment variable")
+	}
+
+	return
+}
+
+func getImageTags(t *testing.T) (awsbiImageTag, awsksImageTag string) {
+	awsbiImageTag = os.Getenv("AWSBI_IMAGE_TAG")
+	if len(awsbiImageTag) == 0 {
+		t.Fatalf("expected non-empty AWSBI_IMAGE_TAG environment variable")
+	}
+
+	awsksImageTag = os.Getenv("AWSKS_IMAGE_TAG")
+	if len(awsksImageTag) == 0 {
+		t.Fatalf("expected non-empty AWSKS_IMAGE_TAG environment variable")
 	}
 
 	return
