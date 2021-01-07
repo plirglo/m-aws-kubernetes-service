@@ -34,6 +34,7 @@ const (
 	awsbiImageTag = "epiphanyplatform/awsbi:0.0.1"
 	awsksImageTag = "epiphanyplatform/awsks:0.0.1"
 	moduleName    = "eks-module"
+	retries       = 30
 )
 
 func TestInit(t *testing.T) {
@@ -530,10 +531,6 @@ func getAwsCreds(t *testing.T) (awsAccessKey, awsSecretKey string) {
 
 //TODO: Move this to a separate GO library so we share it between the AWSBI and AWSEKS modules
 //      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/31
-const (
-	retries = 30
-)
-
 func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsSecretKey string) {
 	newSession, errSession := session.NewSession(&aws.Config{
 		Region:      aws.String(awsRegion),
