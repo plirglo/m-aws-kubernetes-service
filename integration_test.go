@@ -26,7 +26,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/resourcegroups"
 	"github.com/go-test/deep"
 	"github.com/gruntwork-io/terratest/modules/docker"
-	//"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -299,10 +299,9 @@ func TestPlan(t *testing.T) {
 	cleanupOutput(sharedPath)
 }
 
-//TODO: Enable when the following issue is fixed. 
-//      https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/32
-/*
 func TestApply(t *testing.T) {
+	t.Skip() //TODO: Enable when the following issue is fixed: https://github.com/epiphany-platform/m-aws-kubernetes-service/issues/32
+
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	sharedPath := setupOutput(t, "apply")
 	setupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
@@ -403,7 +402,6 @@ func TestApply(t *testing.T) {
 	cleanupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(sharedPath)
 }
-*/
 
 func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
 	cleanupPlan(t, suffix, sharedPath, awsAccessKey, awsSecretKey)

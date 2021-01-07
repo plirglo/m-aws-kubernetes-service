@@ -21,7 +21,7 @@ HOST_GID := $(shell id -g)
 
 .PHONY: build test test-release prepare-aws-credentials metadata
 
-build: guard-VERSION guard-IMAGE guard-USER
+build: guard-VERSION guard-IMAGE guard-USER needs-docker
 	docker build \
 		--build-arg ARG_M_VERSION=$(VERSION) \
 		--build-arg ARG_HOST_UID=$(HOST_UID) \
@@ -47,7 +47,7 @@ release: guard-VERSION guard-IMAGE guard-USER
 		-t $(IMAGE_NAME) \
 		.
 
-metadata: guard-VERSION guard-IMAGE guard-USER
+metadata: guard-VERSION guard-IMAGE guard-USER needs-docker
 	@docker run --rm \
 		-t $(IMAGE_NAME) \
 		metadata
