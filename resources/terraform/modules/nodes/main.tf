@@ -5,6 +5,12 @@ resource "aws_eks_node_group" "eks_nodes" {
   node_role_arn   = aws_iam_role.eks_nodes_iam_role.arn
   subnet_ids      = var.subnet_ids
   instance_types  = [var.worker_groups[count.index].instance_type]
+  disk_size       = var.disk_size
+  ami_type        = var.ami_type
+
+  remote_access {
+    ec2_ssh_key  = var.ec2_ssh_key
+  }
 
   scaling_config {
     desired_size = var.worker_groups[count.index].asg_desired_capacity
