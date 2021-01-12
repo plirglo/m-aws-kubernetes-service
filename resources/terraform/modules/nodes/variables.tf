@@ -14,6 +14,17 @@ variable "worker_groups" {
   }))
 }
 
+variable "worker_groups_win" {
+  description = "Worker groups definition list - Windows"
+  type        = list(object({
+    name                 = string
+    instance_type        = string
+    asg_desired_capacity = number
+    asg_min_size         = number
+    asg_max_size         = number
+  }))
+}
+
 variable "subnet_ids" {
   description = "Subnet ids to join to"
   type = list(string)

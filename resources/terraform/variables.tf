@@ -37,7 +37,27 @@ variable "worker_groups" {
   }))
   default     = [
     {
-      name                 = "default_wg"
+      name                 = "default_wg_lin"
+      instance_type        = "t2.small"
+      asg_desired_capacity = 1
+      asg_min_size         = 1
+      asg_max_size         = 1
+    }
+  ]
+}
+
+variable "worker_groups_win" {
+  description = "Worker groups definition list - Windows"
+  type        = list(object({
+    name                 = string
+    instance_type        = string
+    asg_desired_capacity = number
+    asg_min_size         = number
+    asg_max_size         = number
+  }))
+  default     = [
+    {
+      name                 = "default_wg_win"
       instance_type        = "t2.small"
       asg_desired_capacity = 1
       asg_min_size         = 1
