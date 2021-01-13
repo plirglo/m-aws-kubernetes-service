@@ -16,6 +16,7 @@ module "nodes" {
   subnet_ids    = local.subnet_ids
   worker_groups = var.worker_groups
   depends_on    = [module.control_plane]
+  worker_groups_win = var.worker_groups_win
   providers     = {
     aws = aws
   }
