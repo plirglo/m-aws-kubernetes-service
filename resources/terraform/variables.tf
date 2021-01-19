@@ -51,6 +51,7 @@ variable "worker_groups_win" {
   type        = list(object({
     name                 = string
     instance_type        = string
+    platform             = string
     asg_desired_capacity = number
     asg_min_size         = number
     asg_max_size         = number
@@ -59,6 +60,7 @@ variable "worker_groups_win" {
     {
       name                 = "default_wg_win"
       instance_type        = "t2.small"
+      platform             = "windows"
       asg_desired_capacity = 1
       asg_min_size         = 1
       asg_max_size         = 1

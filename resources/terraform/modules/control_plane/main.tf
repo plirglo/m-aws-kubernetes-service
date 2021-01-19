@@ -43,3 +43,9 @@ resource "aws_eks_cluster" "eks_cluster" {
     aws_cloudwatch_log_group.eks_log_group
   ]
 }
+
+resource "null_resource" "install_vpc_controller" {
+   provisioner "local-exec" {
+      command = "eksctl utils install-vpc-controllers --cluster ${aws_eks_cluster.eks_cluster.name} --approve" 
+   }
+}

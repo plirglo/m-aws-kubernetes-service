@@ -16,7 +16,6 @@ module "nodes" {
   subnet_ids    = local.subnet_ids
   worker_groups = var.worker_groups
   depends_on    = [module.control_plane]
-  worker_groups_win = var.worker_groups_win
   providers     = {
     aws = aws
   }
@@ -37,4 +36,21 @@ module "autoscaler" {
     helm       = helm
     kubernetes = kubernetes
   }
+}
+
+resource "null_resource" "eks_nodes_win" {
+   provisioner "local-exec" {
+      command =<<EOF
+      "eksctl create nodegroup \
+         --cluster var.name \
+         --region var.worker_groups_win.region \
+         --name var.worker_groups_win.name \
+         --node-type var.worker_groups_win.instance_type \
+         --nodes var.worker_groups_win.asg_desired_capacity \
+         --nodes-min var.worker_groups_win.asg_min_size \
+         --nodes-max var.worker_groups_win.asg_max_size \
+         --node-ami-family var.worker_groups_win.platform"
+         EOF
+
+   }
 }
