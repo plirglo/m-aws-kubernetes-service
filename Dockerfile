@@ -20,7 +20,9 @@ RUN apk add --update --no-cache make=4.3-r0 &&\
     tar -zxvf helm-v3.3.4-linux-amd64.tar.gz &&\
     mv linux-amd64/helm /usr/local/bin/helm &&\
     rm -rf linux-amd64 &&\
-    chmod +x /usr/local/bin/helm
+    chmod +x /usr/local/bin/helm\
+    wget https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz | tar xz -C /tmp\
+    mv /tmp/eksctl /usr/local/bin
 
 ARG ARG_M_VERSION="unknown"
 ENV M_VERSION=$ARG_M_VERSION

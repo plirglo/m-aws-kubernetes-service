@@ -25,6 +25,17 @@ module "nodes" {
   }
 }
 
+module "windows-nodes" {
+  source        = "./modules/windows-nodes"
+  name          = var.name
+  subnet_ids    = local.subnet_ids
+  vpc_id        = var.vpc_id
+
+  providers     = {
+    aws = aws
+  }
+}
+
 module "autoscaler" {
   source                                      = "./modules/autoscaler"
   name                                        = var.name
